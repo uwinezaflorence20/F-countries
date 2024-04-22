@@ -7,6 +7,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
   const [countryData, setCountryData] = useState([]);
   const [filteredCountries, setFilteredCountries] = useState([]);
   const [displayMode, setDisplayMode] = useState('card'); // Default mode is 'card'
+  const [selectedContinent, setSelectedContinent] = useState('All'); // Default is All
   const countriesPerPage = 50;
 
   useEffect(() => {
@@ -22,8 +23,12 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
     const filtered = countryData.filter(country =>
       country.name.common.toLowerCase().includes(searchInput.toLowerCase())
     );
-    setFilteredCountries(filtered);
-  }, [searchInput, countryData]);
+    if (selectedContinent !== 'All') {
+      setFilteredCountries(filtered.filter(country => country.region === selectedContinent));
+    } else {
+      setFilteredCountries(filtered);
+    }
+  }, [searchInput, countryData, selectedContinent]);
 
   const handlePageChange = (page) => {
     if (page >= 1 && page <= totalPages) {
@@ -46,6 +51,10 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
 
   const toggleDisplayMode = () => {
     setDisplayMode(prevMode => prevMode === 'card' ? 'table' : 'card');
+  };
+
+  const handleContinentChange = (e) => {
+    setSelectedContinent(e.target.value);
   };
 
   const renderCountries = () => {
@@ -90,7 +99,6 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
       );
     }
   };
-  
 
   const renderPageNumbers = () => {
     const pages = [];
@@ -126,6 +134,16 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
           <button onClick={toggleDisplayMode} className="px-3 py-1 rounded bg-gray-200 text-gray-700 mr-2">
             {displayMode === 'card' ? 'Display as Table' : 'Display as Cards'}
           </button>
+        </div>
+        <div>
+          <select value={selectedContinent} onChange={handleContinentChange} className="px-3 py-2 bg-gray-200 text-gray-700 rounded-md">
+            <option value="All">All Continents</option>
+            <option value="Africa">Africa</option>
+            <option value="Americas">Americas</option>
+            <option value="Asia">Asia</option>
+            <option value="Europe">Europe</option>
+            <option value="Oceania">Oceania</option>
+          </select>
         </div>
       </div>
       {renderCountries()}

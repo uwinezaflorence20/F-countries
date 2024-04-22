@@ -28,18 +28,7 @@ const MyComponent = () => {
           <p className="text-2xl">View of countries</p>
           <p>Page {currentPage} of {pageCount}</p>
         </div>
-        <div className="text-center md:text-right">
-          <select className="text-xl" value={selectedContinent} onChange={(e) => setSelectedContinent(e.target.value)}>
-            <option value="">Select continent</option>
-            <option value="africa">Africa</option>
-            <option value="asia">Asia</option>
-            <option value="south-america">South America</option>
-            <option value="north-america">North America</option>
-            <option value="europe">Europe</option>
-            <option value="ocean">Ocean</option>
-            <option value="antarctica">Antarctica</option>
-          </select>
-        </div>
+        
       </div>
       {/* Pass filtered countries to Pagination component */}
       <Pagination currentPage={currentPage} totalPages={pageCount} onPageChange={handlePageChange} countries={filteredCountries} />
