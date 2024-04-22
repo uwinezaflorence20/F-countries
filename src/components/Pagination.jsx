@@ -6,6 +6,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
   const [searchInput, setSearchInput] = useState('');
   const [countryData, setCountryData] = useState([]);
   const [filteredCountries, setFilteredCountries] = useState([]);
+  const [displayMode, setDisplayMode] = useState('card'); // Default mode is 'card'
   const countriesPerPage = 50;
 
   useEffect(() => {
@@ -43,6 +44,54 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
     }
   };
 
+  const toggleDisplayMode = () => {
+    setDisplayMode(prevMode => prevMode === 'card' ? 'table' : 'card');
+  };
+
+  const renderCountries = () => {
+    if (displayMode === 'card') {
+      return (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+          {currentCountries.map(country => (
+            <div className="flex flex-col items-center" key={country.name.common}>
+              <img src={`https://flagcdn.com/${country.cca2.toLowerCase()}.svg`} alt={country.name.common} className="w-[250px] h-[120px]" />
+              <strong>{country.name.common}</strong>
+              <p><strong>Capital</strong>: {country.capital}</p>
+              <p><strong>Population</strong>: {country.population}</p>
+              <p><strong>Region</strong>: {country.region}</p>
+            </div>
+          ))}
+        </div>
+      );
+    } else if (displayMode === 'table') {
+      return (
+        <table className="w-full">
+          <thead>
+            <tr>
+              <th>Flag</th>
+              <th>Name</th>
+              <th>Capital</th>
+              <th>Population</th>
+              <th>Region</th>
+            </tr>
+          </thead>
+          <tbody>
+            {currentCountries.map(country => (
+              <tr key={country.name.common}>
+                <td><img src={`https://flagcdn.com/${country.cca2.toLowerCase()}.svg`} alt={country.name.common} className="w-[50px] h-[30px]" /></td>
+                <td>{country.name.common}</td>
+                <td>{country.capital}</td>
+                <td>{country.population}</td>
+                <td>{country.region}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      );
+    }
+  };
+  
+
   const renderPageNumbers = () => {
     const pages = [];
     for (let i = 1; i <= totalPages; i++) {
@@ -65,7 +114,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
 
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-20">
-      <div className="flex justify-center items-center mb-16">
+      <div className="flex justify-between items-center mb-8">
         <input
           type="text"
           placeholder="Search by country name"
@@ -73,19 +122,13 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
           onChange={(e) => setSearchInput(e.target.value)}
           className="px-40 py-2 bg-black border text-white border-gray-300 rounded-md mr-2"
         />
-       
+        <div>
+          <button onClick={toggleDisplayMode} className="px-3 py-1 rounded bg-gray-200 text-gray-700 mr-2">
+            {displayMode === 'card' ? 'Display as Table' : 'Display as Cards'}
+          </button>
+        </div>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-        {currentCountries.map(country => (
-          <div className="flex flex-col items-center" key={country.name.common}>
-            <img src={`https://flagcdn.com/${country.cca2.toLowerCase()}.svg`} alt={country.name.common} className="w-[250px] h-[120px]" />
-            <strong>{country.name.common}</strong>
-            <p><strong>Capital</strong>: {country.capital}</p>
-            <p><strong>Population</strong>: {country.population}</p>
-            <p><strong>Region</strong>: {country.region}</p>
-          </div>
-        ))}
-      </div>
+      {renderCountries()}
       <div className="flex justify-center items-center pt-6">
         <button
           onClick={() => handlePageChange(currentPage - 1)}
@@ -108,6 +151,3 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
 };
 
 export default Pagination;
-
-
-
